@@ -91,14 +91,17 @@ using Newtonsoft.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 73 "C:\Users\micha\Documents\EADCA3_VS\EADCA3\BlazorApplication\BlazorApplication\Pages\Quotes.razor"
+#line 72 "C:\Users\micha\Documents\EADCA3_VS\EADCA3\BlazorApplication\BlazorApplication\Pages\Quotes.razor"
        
     private bool isSortedAscending;
     private string activeSortColumn;
 
-    public string InputValue { get; set; } // Character Input
-    private string Title = "Friends Quotes";
-    private List<Friends> listOfQuotes;
+    private string Title = "Friends Quotes"; // Title data
+    private Friends friend = new Friends 
+    { 
+        listOfQuotes = new List<Friends>()
+    };
+
     private Friends randomQuote;
     public string Message
     {
@@ -110,7 +113,7 @@ using Newtonsoft.Json;
 
     protected override async Task OnInitializedAsync()
     {
-        listOfQuotes = await client.GetFromJsonAsync<List<Friends>>("https://friends-quotes-api.herokuapp.com/quotes");
+        friend.listOfQuotes = await client.GetFromJsonAsync<List<Friends>>("https://friends-quotes-api.herokuapp.com/quotes");
         randomQuote = await client.GetFromJsonAsync<Friends>("https://friends-quotes-api.herokuapp.com/quotes/random");
     }
 
@@ -118,55 +121,6 @@ using Newtonsoft.Json;
     {
         await JS.InvokeAsync<string>("Alert", Message);
     }
-
-    public bool IsVisible(Friends friends)
-    {
-        if (string.IsNullOrEmpty(InputValue))
-            return true;
-
-        // Checks if the input value matches any value within the collection and ignoring the letter case sensitive
-        if (friends.character.Contains(InputValue, StringComparison.OrdinalIgnoreCase))
-            return true;
-
-        if (friends.quote.Contains(InputValue, StringComparison.OrdinalIgnoreCase))
-            return true;
-
-        return false;
-    }
-
-    private void SortTable(string columnName)
-    {
-        // Checking for the current activeSortColumn name clicked on
-        if (columnName != activeSortColumn)
-        {
-            // If the column name is not equals to the active column name 
-            // Then order the list collection from ascending to descending
-            listOfQuotes = listOfQuotes.OrderBy(name => name.character).ToList();
-
-            // Set the isSortedAscending to true 
-            isSortedAscending = true;
-
-            // Set the activeSortColumn to the passed in column name 
-            activeSortColumn = columnName;
-        }
-        // If the column name is already == activeSortColumn 
-        else
-        {
-            // If the column is already sorted
-            if (isSortedAscending)
-            {
-                // Then have the list collection in descending order
-                listOfQuotes = listOfQuotes.OrderByDescending(name => name.character).ToList();
-            }
-            else
-            {
-                listOfQuotes = listOfQuotes.OrderBy(name => name.character).ToList();
-            }
-            // Reset sorting 
-            isSortedAscending = !isSortedAscending;
-        }
-    }
-
 
 #line default
 #line hidden
