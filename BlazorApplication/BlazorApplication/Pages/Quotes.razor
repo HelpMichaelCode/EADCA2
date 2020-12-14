@@ -1,0 +1,148 @@
+﻿@* This is a /quotes route *@
+@page "/quotes"
+@* Injecting a HttpClient object to make request to an API*@
+@inject HttpClient client
+
+@inject IJSRuntime JS
+
+<h1 class="display-4">@Title</h1>
+<style>
+    #myButton {
+        margin-bottom: 2.5em;
+    }
+
+    #navInputBox {
+        width: 28%;
+    }
+    .sort-th {
+        cursor: pointer;
+    }
+
+    .fa {
+        float: right;
+    }
+</style>
+@*Checking if the collection of quotes is empty*@
+@if (listOfQuotes == null)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden"></span>
+    </div>
+}
+else
+{
+    @*Random quote button*@
+    <button type="button" class="btn btn-sm btn-primary" @onclick="Alert" id="myButton">Random Quote</button>
+
+
+    <nav class="navbar navbar-light bg-light" id="navInputBox">
+        <form class="container-fluid">
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                    </svg>
+                </span>
+                <input type="text" class="form-control" placeholder="Character or Keyword i.e Pivot" aria-label="Character" aria-describedby="basic-addon1" @bind="@InputValue" @oninput="@((e) => { InputValue = (string)e.Value; })" >
+            </div>
+        </form>
+    </nav>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="sort-th" @onclick="@(() => SortTable("Character"))">Character</th>
+                <th>Quote</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @*Iterate through each item on the list collection*@
+            @foreach (var item in listOfQuotes.Where(x => IsVisible(x)))
+            {
+                <tr>
+                    <td>@item.character</td>
+                    <td>@item.quote</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@* The @code allows us to generate C# code and call it within this class*@
+@code {
+    private bool isSortedAscending;
+    private string activeSortColumn;
+
+    public string InputValue { get; set; } // Character Input
+    private string Title = "Friends Quotes";
+    private List<Friends> listOfQuotes;
+    private Friends randomQuote;
+    public string Message
+    {
+        get
+        {
+            return $"{randomQuote.quote} ({randomQuote.character})";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        listOfQuotes = await client.GetFromJsonAsync<List<Friends>>("https://friends-quotes-api.herokuapp.com/quotes");
+        randomQuote = await client.GetFromJsonAsync<Friends>("https://friends-quotes-api.herokuapp.com/quotes/random");
+    }
+
+    private async Task Alert()
+    {
+        await JS.InvokeAsync<string>("Alert", Message);
+    }
+
+    public bool IsVisible(Friends friends)
+    {
+        if (string.IsNullOrEmpty(InputValue))
+            return true;
+
+        // Checks if the input value matches any value within the collection and ignoring the letter case sensitive
+        if (friends.character.Contains(InputValue, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (friends.quote.Contains(InputValue, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
+
+    private void SortTable(string columnName)
+    {
+        // Checking for the current activeSortColumn name clicked on
+        if (columnName != activeSortColumn)
+        {
+            // If the column name is not equals to the active column name 
+            // Then order the list collection from ascending to descending
+            listOfQuotes = listOfQuotes.OrderBy(name => name.character).ToList();
+
+            // Set the isSortedAscending to true 
+            isSortedAscending = true;
+
+            // Set the activeSortColumn to the passed in column name 
+            activeSortColumn = columnName;
+        }
+        // If the column name is already == activeSortColumn 
+        else
+        {
+            // If the column is already sorted
+            if (isSortedAscending)
+            {
+                // Then have the list collection in descending order
+                listOfQuotes = listOfQuotes.OrderByDescending(name => name.character).ToList();
+            }
+            else
+            {
+                listOfQuotes = listOfQuotes.OrderBy(name => name.character).ToList();
+            }
+            // Reset sorting 
+            isSortedAscending = !isSortedAscending;
+        }
+    }
+
+}
