@@ -91,13 +91,11 @@ using Newtonsoft.Json;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 72 "C:\Users\micha\Documents\EADCA3_VS\EADCA3\BlazorApplication\BlazorApplication\Pages\Quotes.razor"
+#line 92 "C:\Users\micha\Documents\EADCA3_VS\EADCA3\BlazorApplication\BlazorApplication\Pages\Quotes.razor"
        
+    private bool isCharacterOrQouteSearch;
     private string Title = "Friends Quotes"; // Title data
-    private QueryFriends friend = new QueryFriends
-    {
-        listOfQuotes = new List<FriendsResponseData>()
-    };
+    private QueryFriends friend = new QueryFriends();
 
     private FriendsResponseData randomQuote;
     public string Message

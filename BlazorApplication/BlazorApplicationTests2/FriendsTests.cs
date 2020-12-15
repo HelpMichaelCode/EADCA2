@@ -127,49 +127,80 @@ namespace BlazorApplication.Tests
         public void CheckIfSearchValueForCharacterIsWorking()
         {
             // Arrange
-            QueryFriends friend = new QueryFriends
-            { 
+            QueryFriends query = new QueryFriends
+            {
                 listOfQuotes = new List<FriendsResponseData>()
             };
 
             FriendsResponseData friend1 = new FriendsResponseData
             {
-                character = "Ross"
+                character = "Ross",
             };
 
             FriendsResponseData friend2 = new FriendsResponseData
             {
-                character = "Chandler"
+                character = "Chandler",
             };
 
             FriendsResponseData friend3 = new FriendsResponseData
             {
-                character = "Monica"
+                character = "Monica",
             };
 
             // Act
-            friend.listOfQuotes.Add(friend1);
-            friend.listOfQuotes.Add(friend2);
-            friend.listOfQuotes.Add(friend3);
+            var listOfCharacterNames = "";
+            query.listOfQuotes.AddRange(new List<FriendsResponseData> { friend1, friend2, friend3});
+            foreach (var item in query.listOfQuotes)
+            {
+                listOfCharacterNames += $"{item.character},";
+            }
 
-            friend.InputValue = "Ross";
+            query.CharacterInputValue = "Monica";
+
+            var checkName = listOfCharacterNames.Contains(query.CharacterInputValue);
 
             // Assert
-            //Assert.IsTrue(friend.IsVisible(friend));
+            Assert.IsTrue(checkName);
         }
 
         [TestMethod]
         public void CheckIfSearcKeyWordForQuoteIsWorking()
         {
-            //// Arrange
-            //QueryFriends friend = new QueryFriends();
-            //var quoteSearch = new FriendsResponseData { quote = "Pivot! Pivot! Pivot! Pivot! Pivot!" };
+            // Arrange
+            QueryFriends query = new QueryFriends
+            {
+                listOfQuotes = new List<FriendsResponseData>()
+            };
 
-            //quoteSearch.InputValue = "332";
-            //// Act
+            FriendsResponseData quote1 = new FriendsResponseData
+            {
+                quote = "Pivot! Pivot! Pivot! Pivot! Pivot!"
+            };
 
-            //// Assert
-            //Assert.IsTrue(friend.IsVisible(quoteSearch));
+            FriendsResponseData quote2 = new FriendsResponseData
+            {
+                quote = "Joey doesn't share food!"
+            };
+
+            FriendsResponseData quote3 = new FriendsResponseData
+            {
+                quote = "Guys can fake it? Unbelievable! The one thing that’s ours!"
+            };
+
+            // Act
+            var qoutes = "";
+            query.listOfQuotes.AddRange(new List<FriendsResponseData> { quote1, quote2, quote3 });
+            foreach (var item in query.listOfQuotes)
+            {
+                qoutes += $"{item.quote},";
+            }
+
+            query.KeywordInputValue = "Piv";
+
+            var checkQuote = qoutes.Contains(query.KeywordInputValue);
+
+            // Assert
+            Assert.IsTrue(checkQuote);
         }
     }
 }

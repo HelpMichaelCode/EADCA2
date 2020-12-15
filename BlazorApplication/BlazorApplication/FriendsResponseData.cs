@@ -8,6 +8,7 @@ namespace BlazorApplication
     public class FriendsResponseData
     {
         public string quote { get; set; }
+
         public string character { get; set; }
     }
 }

@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlazorApplication
 {
     public class QueryFriends
     {
-        public string InputValue { get; set; } // Input value for character filter and keyword filter
+        [DataType(DataType.Text)]
+        public string CharacterInputValue { get; set; } // Input value for character filter and keyword filter
+
+        [DataType(DataType.Text)]
+        public string KeywordInputValue { get; set; } // Input value for character filter and keyword filter
         private bool isSortedAscending;
         private string activeSortColumn;
 
@@ -46,16 +50,25 @@ namespace BlazorApplication
             }
         }
 
-        public bool IsVisible(FriendsResponseData friends)
+        public bool FilterByQuote(FriendsResponseData friends)
         {
-            if (string.IsNullOrEmpty(InputValue))
+            if (string.IsNullOrEmpty(KeywordInputValue))
                 return true;
 
             // Checks if the input value matches any value within the collection and ignoring the letter case sensitive
-            if (friends.character.Contains(InputValue, StringComparison.OrdinalIgnoreCase))
+            if (friends.quote.Contains(KeywordInputValue, StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            if (friends.quote.Contains(InputValue, StringComparison.OrdinalIgnoreCase))
+            return false;
+        }
+
+        public bool FilterByCharacter(FriendsResponseData friends)
+        {
+            if (string.IsNullOrEmpty(CharacterInputValue))
+                return true;
+
+            // Checks if the input value matches any value within the collection and ignoring the letter case sensitive
+            if (friends.character.Contains(CharacterInputValue, StringComparison.OrdinalIgnoreCase))
                 return true;
 
             return false;

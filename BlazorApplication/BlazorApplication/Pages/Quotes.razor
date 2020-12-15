@@ -14,6 +14,7 @@
     #navInputBox {
         width: 28%;
     }
+
     .sort-th {
         cursor: pointer;
     }
@@ -22,47 +23,66 @@
         float: right;
     }
 </style>
+@*Random quote button*@
+
+<button type="button" class="btn btn-sm btn-primary" @onclick="Alert" id="myButton">Random Quote</button>
+
+<nav class="navbar navbar-light bg-light" id="navInputBox">
+    <form class="container-fluid">
+        <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                </svg>
+            </span>
+            <input type="text" class="form-control" placeholder="Character Name" @bind="@friend.CharacterInputValue" @oninput="@((e) => { friend.CharacterInputValue = (string)e.Value; isCharacterOrQouteSearch = true; })">
+            <input type="text" class="form-control" placeholder="Quote Keyword" @bind="@friend.KeywordInputValue" @oninput="@((e) => { friend.KeywordInputValue = (string)e.Value; isCharacterOrQouteSearch = false; })">
+        </div>
+    </form>
+</nav>
+
 @*Checking if the collection of quotes is empty*@
 @if (friend.listOfQuotes == null)
-{   
+{
     <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden"></span>
     </div>
 }
 else
 {
-    @*Random quote button*@
-    <button type="button" class="btn btn-sm btn-primary" @onclick="Alert" id="myButton">Random Quote</button>
-
-    <nav class="navbar navbar-light bg-light" id="navInputBox">
-        <form class="container-fluid">
-            <div class="input-group">
-                <span class="input-group-text" id="basic-addon1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                    </svg>
-                </span>
-                <input type="text" class="form-control" placeholder="Character or Keyword i.e Pivot" aria-label="Character" aria-describedby="basic-addon1" @bind="@friend.InputValue" @oninput="@((e) => { friend.InputValue = (string)e.Value; })" >
-            </div>
-        </form>
-    </nav>
-
     <table class="table">
         <thead>
             <tr>
-                <th class="sort-th" @onclick="@(() => friend.SortTable("Character"))">Character</th>
+                <th class="sort-th" @onclick="@(() => friend.SortTable("Character"))">Character 
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
+                </svg>
+                </th>
                 <th>Quote</th>
             </tr>
         </thead>
 
         <tbody>
             @*Iterate through each item on the list collection*@
-            @foreach (var item in friend.listOfQuotes.Where(x => friend.IsVisible(x)))
+            @if (isCharacterOrQouteSearch)
             {
-                <tr>
-                    <td>@item.character</td>
-                    <td>@item.quote</td>
-                </tr>
+                @foreach (var item in friend.listOfQuotes.Where(x => friend.FilterByCharacter(x)))
+                {
+                    <tr>
+                        <td>@item.character</td>
+                        <td>@item.quote</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                @foreach (var item in friend.listOfQuotes.Where(x => friend.FilterByQuote(x)))
+                {
+                    <tr>
+                        <td>@item.character</td>
+                        <td>@item.quote</td>
+                    </tr>
+                }
             }
         </tbody>
     </table>
@@ -70,11 +90,9 @@ else
 
 @* The @code allows us to generate C# code and call it within this class *@
 @code {
+    private bool isCharacterOrQouteSearch;
     private string Title = "Friends Quotes"; // Title data
-    private QueryFriends friend = new QueryFriends
-    {
-        listOfQuotes = new List<FriendsResponseData>()
-    };
+    private QueryFriends friend = new QueryFriends();
 
     private FriendsResponseData randomQuote;
     public string Message
