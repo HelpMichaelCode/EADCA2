@@ -24,7 +24,7 @@
 </style>
 @*Checking if the collection of quotes is empty*@
 @if (friend.listOfQuotes == null)
-{
+{   
     <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden"></span>
     </div>
@@ -71,12 +71,12 @@ else
 @* The @code allows us to generate C# code and call it within this class *@
 @code {
     private string Title = "Friends Quotes"; // Title data
-    private Friends friend = new Friends 
-    { 
-        listOfQuotes = new List<Friends>()
+    private QueryFriends friend = new QueryFriends
+    {
+        listOfQuotes = new List<FriendsResponseData>()
     };
 
-    private Friends randomQuote;
+    private FriendsResponseData randomQuote;
     public string Message
     {
         get
@@ -87,8 +87,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        friend.listOfQuotes = await client.GetFromJsonAsync<List<Friends>>("https://friends-quotes-api.herokuapp.com/quotes");
-        randomQuote = await client.GetFromJsonAsync<Friends>("https://friends-quotes-api.herokuapp.com/quotes/random");
+        friend.listOfQuotes = await client.GetFromJsonAsync<List<FriendsResponseData>>("https://friends-quotes-api.herokuapp.com/quotes");
+        randomQuote = await client.GetFromJsonAsync<FriendsResponseData>("https://friends-quotes-api.herokuapp.com/quotes/random");
     }
 
     private async Task Alert()

@@ -94,12 +94,12 @@ using Newtonsoft.Json;
 #line 72 "C:\Users\micha\Documents\EADCA3_VS\EADCA3\BlazorApplication\BlazorApplication\Pages\Quotes.razor"
        
     private string Title = "Friends Quotes"; // Title data
-    private Friends friend = new Friends 
-    { 
-        listOfQuotes = new List<Friends>()
+    private QueryFriends friend = new QueryFriends
+    {
+        listOfQuotes = new List<FriendsResponseData>()
     };
 
-    private Friends randomQuote;
+    private FriendsResponseData randomQuote;
     public string Message
     {
         get
@@ -110,8 +110,8 @@ using Newtonsoft.Json;
 
     protected override async Task OnInitializedAsync()
     {
-        friend.listOfQuotes = await client.GetFromJsonAsync<List<Friends>>("https://friends-quotes-api.herokuapp.com/quotes");
-        randomQuote = await client.GetFromJsonAsync<Friends>("https://friends-quotes-api.herokuapp.com/quotes/random");
+        friend.listOfQuotes = await client.GetFromJsonAsync<List<FriendsResponseData>>("https://friends-quotes-api.herokuapp.com/quotes");
+        randomQuote = await client.GetFromJsonAsync<FriendsResponseData>("https://friends-quotes-api.herokuapp.com/quotes/random");
     }
 
     private async Task Alert()
