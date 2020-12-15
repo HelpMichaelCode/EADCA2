@@ -93,9 +93,6 @@ using Newtonsoft.Json;
 #nullable restore
 #line 72 "C:\Users\micha\Documents\EADCA3_VS\EADCA3\BlazorApplication\BlazorApplication\Pages\Quotes.razor"
        
-    private bool isSortedAscending;
-    private string activeSortColumn;
-
     private string Title = "Friends Quotes"; // Title data
     private Friends friend = new Friends 
     { 

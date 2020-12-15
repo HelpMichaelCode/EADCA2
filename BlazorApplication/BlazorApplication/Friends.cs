@@ -12,6 +12,7 @@ namespace BlazorApplication
         public string InputValue { get; set; } // Input value for character filter and keyword filter
         private bool isSortedAscending;
         private string activeSortColumn;
+
         public List<Friends> listOfQuotes;
 
         public void SortTable(string columnName)
